@@ -26,12 +26,18 @@ void mockHttpPost(Client client, Uri uri) =>
 class ClientSpy extends Mock implements Client {}
 
 void main() {
+  late HttpAdapter sut;
+  late Client client;
+  late Uri uri;
+
+  setUp(() {
+    client = ClientSpy();
+    sut = HttpAdapter(client);
+    uri = Uri.parse(faker.internet.httpUrl());
+  });
+
   group('post', () {
     test('Should call post with correct values', () async {
-      final client = ClientSpy();
-      final sut = HttpAdapter(client);
-      final uri = Uri.parse(faker.internet.httpUrl());
-
       mockHttpPost(client, uri);
 
       await sut.request(uri: uri, method: 'post');
