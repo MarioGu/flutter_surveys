@@ -14,6 +14,7 @@ void main() {
   late RemoteAuthentication sut;
   late HttpClientSpy httpClient;
   late String url;
+  late AuthenticationParams params;
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -22,11 +23,11 @@ void main() {
       httpClient: httpClient,
       url: url,
     );
+    params = AuthenticationParams(
+        email: faker.internet.email(), password: faker.internet.password());
   });
 
   test('Should call HttpClient with correct values', () async {
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
     await sut.auth(params);
 
     verify(() => httpClient.request(
