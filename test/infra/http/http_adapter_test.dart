@@ -8,14 +8,20 @@ class HttpAdapter {
 
   HttpAdapter(this.client);
 
-  Future<void> request({required String url, required String method}) async {
-    await client.post(Uri.parse(url));
+  Future<void> request({required Uri uri, required String method}) async {
+    final headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json'
+    };
+    await client.post(uri, headers: headers);
   }
 }
 
-void mockHttpPost(Client client, String url) =>
-    when(() => client.post(Uri.parse(url)))
-        .thenAnswer((_) async => Response('', 200));
+void mockHttpPost(Client client, Uri uri) =>
+    when(() => client.post(uri, headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json'
+        })).thenAnswer((_) async => Response('', 200));
 
 class ClientSpy extends Mock implements Client {}
 
@@ -24,13 +30,16 @@ void main() {
     test('Should call post with correct values', () async {
       final client = ClientSpy();
       final sut = HttpAdapter(client);
-      final url = faker.internet.httpUrl();
+      final uri = Uri.parse(faker.internet.httpUrl());
 
-      mockHttpPost(client, url);
+      mockHttpPost(client, uri);
 
-      await sut.request(url: url, method: 'post');
+      await sut.request(uri: uri, method: 'post');
 
-      verify(() => client.post(Uri.parse(url)));
+      verify(() => client.post(uri, headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          }));
     });
   });
 }
