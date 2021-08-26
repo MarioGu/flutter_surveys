@@ -16,15 +16,23 @@ class HttpAdapter {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    await client.post(uri, headers: headers, body: jsonEncode(body));
+    final jsonBody = body != null ? jsonEncode(body) : null;
+    await client.post(uri, headers: headers, body: jsonBody);
   }
 }
 
-void mockHttpPost(Client client, Uri uri) => when(() => client.post(uri,
-    headers: {'content-type': 'application/json', 'accept': 'application/json'},
-    body: any(named: 'body'))).thenAnswer((_) async => Response('', 200));
+void mockHttpPost(Client client, Uri uri, {Map? body}) =>
+    when(() => client.post(uri,
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json'
+            },
+            body: body != null ? jsonEncode(body) : null))
+        .thenAnswer((_) async => Response('', 200));
 
 class ClientSpy extends Mock implements Client {}
+
+class FakeUri extends Fake implements Uri {}
 
 void main() {
   late HttpAdapter sut;
@@ -35,12 +43,13 @@ void main() {
     client = ClientSpy();
     sut = HttpAdapter(client);
     uri = Uri.parse(faker.internet.httpUrl());
-
-    mockHttpPost(client, uri);
+    registerFallbackValue(FakeUri());
   });
 
   group('post', () {
     test('Should call post with correct values', () async {
+      mockHttpPost(client, uri, body: {'any_key': 'any_value'});
+
       await sut
           .request(uri: uri, method: 'post', body: {'any_key': 'any_value'});
 
@@ -50,6 +59,14 @@ void main() {
             'accept': 'application/json'
           },
           body: '{"any_key":"any_value"}'));
+    });
+
+    test('Should call post without body', () async {
+      mockHttpPost(client, uri);
+
+      await sut.request(uri: uri, method: 'post');
+
+      verify(() => client.post(any(), headers: any(named: 'headers')));
     });
   });
 }
