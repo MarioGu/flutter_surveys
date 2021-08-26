@@ -13,12 +13,12 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
+  http:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   test:
-  mockito:
   mocktail:
   faker:
 
