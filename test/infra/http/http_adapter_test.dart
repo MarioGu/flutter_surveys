@@ -93,5 +93,13 @@ void main() {
 
       expect(response, {});
     });
+
+    test('Should return null if post returns 204', () async {
+      mockResponse(204, responseBody: '');
+
+      final response = await sut.request(url: url, method: 'post');
+
+      expect(response, {});
+    });
   });
 }
