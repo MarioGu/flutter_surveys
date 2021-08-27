@@ -24,4 +24,7 @@ dev_dependencies:
 
   flutter_lints: ^1.0.0
 
-uses-material-design: true
+flutter:
+  uses-material-design: true
+  assets:
+    - lib/ui/assets/

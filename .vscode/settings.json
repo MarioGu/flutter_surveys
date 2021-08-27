@@ -1,4 +1,7 @@
 {
   "dart.flutterSdkPath": "/Users/mariobonaldi/Development/flutter",
-  "workbench.colorTheme": "Dracula"
+  "workbench.colorTheme": "Dracula",
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true
 }
