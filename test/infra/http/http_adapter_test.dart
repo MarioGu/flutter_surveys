@@ -1,34 +1,34 @@
 import 'dart:convert';
 
 import 'package:faker/faker.dart';
+import 'package:flutter_course/data/http/http_client.dart';
 import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-class HttpAdapter {
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<void> request(
-      {required Uri uri, required String method, Map? body}) async {
+  @override
+  Future<Map> request({String? url, String? method, Map? body}) async {
     final headers = {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
     final jsonBody = body != null ? jsonEncode(body) : null;
-    await client.post(uri, headers: headers, body: jsonBody);
+    url ??= '';
+    Uri uri = Uri.parse(url);
+    final response = await client.post(uri, headers: headers, body: jsonBody);
+    return jsonDecode(response.body);
   }
 }
 
-void mockHttpPost(Client client, Uri uri, {Map? body}) =>
-    when(() => client.post(uri,
-            headers: {
-              'content-type': 'application/json',
-              'accept': 'application/json'
-            },
-            body: body != null ? jsonEncode(body) : null))
-        .thenAnswer((_) async => Response('', 200));
+void mockHttpPost(Client client, {bool? body}) => when(() => client.post(any(),
+        headers: any(named: 'headers'),
+        body: body == true ? any(named: 'body') : null))
+    .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
 
 class ClientSpy extends Mock implements Client {}
 
@@ -37,21 +37,23 @@ class FakeUri extends Fake implements Uri {}
 void main() {
   late HttpAdapter sut;
   late Client client;
-  late Uri uri;
+  late String url;
 
   setUp(() {
     client = ClientSpy();
     sut = HttpAdapter(client);
-    uri = Uri.parse(faker.internet.httpUrl());
+    url = faker.internet.httpUrl();
     registerFallbackValue(FakeUri());
   });
 
   group('post', () {
     test('Should call post with correct values', () async {
-      mockHttpPost(client, uri, body: {'any_key': 'any_value'});
+      mockHttpPost(client, body: true);
 
       await sut
-          .request(uri: uri, method: 'post', body: {'any_key': 'any_value'});
+          .request(url: url, method: 'post', body: {'any_key': 'any_value'});
+
+      Uri uri = Uri.parse(url);
 
       verify(() => client.post(uri,
           headers: {
@@ -62,11 +64,19 @@ void main() {
     });
 
     test('Should call post without body', () async {
-      mockHttpPost(client, uri);
+      mockHttpPost(client);
 
-      await sut.request(uri: uri, method: 'post');
+      await sut.request(url: url, method: 'post');
 
       verify(() => client.post(any(), headers: any(named: 'headers')));
     });
+  });
+
+  test('Should return data if post returns 200', () async {
+    mockHttpPost(client);
+
+    final response = await sut.request(url: url, method: 'post');
+
+    expect(response, {'any_key': 'any_value'});
   });
 }
