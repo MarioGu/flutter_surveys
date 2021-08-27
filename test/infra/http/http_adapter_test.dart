@@ -17,6 +17,17 @@ void main() {
   const Map anyMapBody = {'any_key': 'any_value'};
   const String anyStringBody = '{"any_key":"any_value"}';
 
+  When<Future<Response>> mockRequest({bool? body = false}) =>
+      when(() => client.post(any(),
+          headers: any(named: 'headers'),
+          body: body == true ? any(named: 'body') : null));
+
+  void mockResponse(int statusCode,
+      {bool? requestBody, String responseBody = anyStringBody}) {
+    mockRequest(body: requestBody)
+        .thenAnswer((_) async => Response(responseBody, statusCode));
+  }
+
   setUp(() {
     client = ClientSpy();
     sut = HttpAdapter(client);
@@ -24,18 +35,15 @@ void main() {
     registerFallbackValue(FakeUri());
   });
 
+  group('shared', () {
+    test('Should throw ServerError if invalid method is provided', () async {
+      final future = sut.request(url: url, method: 'invalid method');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
+
   group('post', () {
-    When<Future<Response>> mockRequest({bool? body = false}) =>
-        when(() => client.post(any(),
-            headers: any(named: 'headers'),
-            body: body == true ? any(named: 'body') : null));
-
-    void mockResponse(int statusCode,
-        {bool? requestBody, String responseBody = anyStringBody}) {
-      mockRequest(body: requestBody)
-          .thenAnswer((_) async => Response(responseBody, statusCode));
-    }
-
     setUp(() {
       mockResponse(200);
     });
