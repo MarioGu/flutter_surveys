@@ -21,14 +21,15 @@ class HttpAdapter implements HttpClient {
     url ??= '';
     Uri uri = Uri.parse(url);
     final response = await client.post(uri, headers: headers, body: jsonBody);
-    return jsonDecode(response.body);
+    return response.body.isEmpty ? {} : jsonDecode(response.body);
   }
 }
 
-void mockHttpPost(Client client, {bool? body}) => when(() => client.post(any(),
+void mockHttpPost(Client client, {bool? body, bool? response}) => when(() =>
+    client.post(any(),
         headers: any(named: 'headers'),
-        body: body == true ? any(named: 'body') : null))
-    .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
+        body: body == true ? any(named: 'body') : null)).thenAnswer((_) async =>
+    Response(response == true ? '{"any_key":"any_value"}' : '', 200));
 
 class ClientSpy extends Mock implements Client {}
 
@@ -48,7 +49,7 @@ void main() {
 
   group('post', () {
     test('Should call post with correct values', () async {
-      mockHttpPost(client, body: true);
+      mockHttpPost(client, body: true, response: true);
 
       await sut
           .request(url: url, method: 'post', body: {'any_key': 'any_value'});
@@ -73,10 +74,18 @@ void main() {
   });
 
   test('Should return data if post returns 200', () async {
-    mockHttpPost(client);
+    mockHttpPost(client, response: true);
 
     final response = await sut.request(url: url, method: 'post');
 
     expect(response, {'any_key': 'any_value'});
+  });
+
+  test('Should return empty Map if post returns 200 with no data', () async {
+    mockHttpPost(client);
+
+    final response = await sut.request(url: url, method: 'post');
+
+    expect(response, {});
   });
 }
