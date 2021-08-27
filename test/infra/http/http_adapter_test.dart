@@ -25,12 +25,6 @@ class HttpAdapter implements HttpClient {
   }
 }
 
-void mockHttpPost(Client client, {bool? body, bool? response}) => when(() =>
-    client.post(any(),
-        headers: any(named: 'headers'),
-        body: body == true ? any(named: 'body') : null)).thenAnswer((_) async =>
-    Response(response == true ? '{"any_key":"any_value"}' : '', 200));
-
 class ClientSpy extends Mock implements Client {}
 
 class FakeUri extends Fake implements Uri {}
@@ -39,6 +33,8 @@ void main() {
   late HttpAdapter sut;
   late Client client;
   late String url;
+  const Map anyMapBody = {'any_key': 'any_value'};
+  const String anyStringBody = '{"any_key":"any_value"}';
 
   setUp(() {
     client = ClientSpy();
@@ -48,44 +44,54 @@ void main() {
   });
 
   group('post', () {
+    When<Future<Response>> mockRequest({bool? body = false}) =>
+        when(() => client.post(any(),
+            headers: any(named: 'headers'),
+            body: body == true ? any(named: 'body') : null));
+
+    void mockResponse(int statusCode,
+        {bool? requestBody, String responseBody = anyStringBody}) {
+      mockRequest(body: requestBody)
+          .thenAnswer((_) async => Response(responseBody, statusCode));
+    }
+
+    setUp(() {
+      mockResponse(200);
+    });
+
     test('Should call post with correct values', () async {
-      mockHttpPost(client, body: true, response: true);
-
-      await sut
-          .request(url: url, method: 'post', body: {'any_key': 'any_value'});
-
       Uri uri = Uri.parse(url);
+
+      mockResponse(200, requestBody: true);
+
+      await sut.request(url: url, method: 'post', body: anyMapBody);
 
       verify(() => client.post(uri,
           headers: {
             'content-type': 'application/json',
             'accept': 'application/json'
           },
-          body: '{"any_key":"any_value"}'));
+          body: anyStringBody));
     });
 
     test('Should call post without body', () async {
-      mockHttpPost(client);
-
       await sut.request(url: url, method: 'post');
 
       verify(() => client.post(any(), headers: any(named: 'headers')));
     });
-  });
 
-  test('Should return data if post returns 200', () async {
-    mockHttpPost(client, response: true);
+    test('Should return data if post returns 200', () async {
+      final response = await sut.request(url: url, method: 'post');
 
-    final response = await sut.request(url: url, method: 'post');
+      expect(response, anyMapBody);
+    });
 
-    expect(response, {'any_key': 'any_value'});
-  });
+    test('Should return empty Map if post returns 200 with no data', () async {
+      mockResponse(200, responseBody: '');
 
-  test('Should return empty Map if post returns 200 with no data', () async {
-    mockHttpPost(client);
+      final response = await sut.request(url: url, method: 'post');
 
-    final response = await sut.request(url: url, method: 'post');
-
-    expect(response, {});
+      expect(response, {});
+    });
   });
 }
