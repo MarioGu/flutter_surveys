@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -20,6 +19,10 @@ class HttpAdapter implements HttpClient {
     url ??= '';
     Uri uri = Uri.parse(url);
     final response = await client.post(uri, headers: headers, body: jsonBody);
+    return _handleResponse(response);
+  }
+
+  Map _handleResponse(Response response) {
     if (response.statusCode == 200) {
       return response.body.isEmpty ? {} : jsonDecode(response.body);
     } else {
