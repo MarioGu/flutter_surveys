@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../pages/login_page.dart';
+import '../pages/pages.dart';
+
+class LoginPresenterTemp implements LoginPresenter {
+  @override
+  void validateEmail(String email) {
+    // TODO: implement validateEmail
+  }
+
+  @override
+  void validatePassword(String email) {
+    // TODO: implement validatePassword
+  }
+}
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -14,6 +26,8 @@ class App extends StatelessWidget {
     const primaryColor = Color.fromRGBO(224, 70, 94, 1);
     const secondColor = Color.fromRGBO(239, 123, 0, 1);
     const thirdColor = Color.fromRGBO(220, 220, 0, 1);
+
+    final LoginPresenter presenter = LoginPresenterTemp();
 
     return MaterialApp(
       title: 'Challenges',
@@ -51,7 +65,7 @@ class App extends StatelessWidget {
           primary: primaryColor,
         )),
       ),
-      home: const LoginPage(),
+      home: LoginPage(presenter),
     );
   }
 }
