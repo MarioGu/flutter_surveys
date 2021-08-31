@@ -14,6 +14,10 @@ class LoginPresenterTemp implements LoginPresenter {
   void validatePassword(String email) {
     // TODO: implement validatePassword
   }
+
+  @override
+  // TODO: implement emailErrorStream
+  Stream<String> get emailErrorStream => throw UnimplementedError();
 }
 
 class App extends StatelessWidget {
