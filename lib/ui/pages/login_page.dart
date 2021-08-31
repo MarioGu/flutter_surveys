@@ -45,10 +45,10 @@ class LoginPage extends StatelessWidget {
                           obscureText: true,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16),
                         child: ElevatedButton(
-                            onPressed: () {}, child: const Text('Entrar')),
+                            onPressed: null, child: Text('Entrar')),
                       ),
                       TextButton.icon(
                           onPressed: () {},
