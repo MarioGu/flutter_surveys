@@ -43,20 +43,28 @@ class LoginPage extends StatelessWidget {
                               onChanged: presenter.validateEmail,
                             );
                           }),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 32),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Senha',
-                            icon: Icon(
-                              Icons.lock,
-                              color: Theme.of(context).primaryColorDark,
-                            ),
-                          ),
-                          obscureText: true,
-                          onChanged: presenter.validatePassword,
-                        ),
-                      ),
+                      StreamBuilder<String>(
+                          stream: presenter.passwordErrorStream,
+                          builder: (context, snapshot) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 32),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Senha',
+                                  icon: Icon(
+                                    Icons.lock,
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                  errorText: snapshot.data?.isEmpty == true
+                                      ? null
+                                      : snapshot.data,
+                                ),
+                                obscureText: true,
+                                onChanged: presenter.validatePassword,
+                              ),
+                            );
+                          }),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: ElevatedButton(

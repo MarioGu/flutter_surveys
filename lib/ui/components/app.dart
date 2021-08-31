@@ -18,6 +18,10 @@ class LoginPresenterTemp implements LoginPresenter {
   @override
   // TODO: implement emailErrorStream
   Stream<String> get emailErrorStream => throw UnimplementedError();
+
+  @override
+  // TODO: implement passwordErrorStream
+  Stream<String> get passwordErrorStream => throw UnimplementedError();
 }
 
 class App extends StatelessWidget {
