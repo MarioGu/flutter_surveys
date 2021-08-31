@@ -22,6 +22,10 @@ class LoginPresenterTemp implements LoginPresenter {
   @override
   // TODO: implement passwordErrorStream
   Stream<String> get passwordErrorStream => throw UnimplementedError();
+
+  @override
+  // TODO: implement isFormValidStream
+  Stream<bool> get isFormValidStream => throw UnimplementedError();
 }
 
 class App extends StatelessWidget {
