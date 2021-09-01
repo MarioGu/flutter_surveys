@@ -39,6 +39,11 @@ class LoginPresenterTemp implements LoginPresenter {
   @override
   // TODO: implement mainErrorStream
   Stream<String> get mainErrorStream => throw UnimplementedError();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+  }
 }
 
 class App extends StatelessWidget {
