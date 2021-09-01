@@ -45,6 +45,12 @@ class LoginPage extends StatelessWidget {
             }
           });
 
+          presenter.mainErrorStream.listen((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(backgroundColor: Colors.red[900], content: Text(error)),
+            );
+          });
+
           return SafeArea(
             child: SingleChildScrollView(
               child: Column(
