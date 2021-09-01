@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
 import '../pages.dart';
+import './components/components.dart';
 
 class LoginPage extends StatefulWidget {
   final LoginPresenter presenter;
@@ -47,68 +49,55 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(32),
-                    child: Form(
-                      child: Column(
-                        children: [
-                          StreamBuilder<String>(
-                              stream: widget.presenter.emailErrorStream,
-                              builder: (context, snapshot) {
-                                return TextFormField(
-                                  decoration: InputDecoration(
-                                    labelText: 'Email',
-                                    icon: Icon(
-                                      Icons.email,
-                                      color: Theme.of(context).primaryColorDark,
-                                    ),
-                                    errorText: snapshot.data?.isEmpty == true
-                                        ? null
-                                        : snapshot.data,
-                                  ),
-                                  keyboardType: TextInputType.emailAddress,
-                                  onChanged: widget.presenter.validateEmail,
-                                );
-                              }),
-                          StreamBuilder<String>(
-                              stream: widget.presenter.passwordErrorStream,
-                              builder: (context, snapshot) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8.0, bottom: 32),
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      labelText: 'Senha',
-                                      icon: Icon(
-                                        Icons.lock,
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                      ),
-                                      errorText: snapshot.data?.isEmpty == true
-                                          ? null
-                                          : snapshot.data,
-                                    ),
-                                    obscureText: true,
-                                    onChanged:
-                                        widget.presenter.validatePassword,
-                                  ),
-                                );
-                              }),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: StreamBuilder<bool>(
-                                stream: widget.presenter.isFormValidStream,
+                    child: Provider(
+                      create: (_) => widget.presenter,
+                      child: Form(
+                        child: Column(
+                          children: [
+                            const EmailInput(),
+                            StreamBuilder<String>(
+                                stream: widget.presenter.passwordErrorStream,
                                 builder: (context, snapshot) {
-                                  return ElevatedButton(
-                                      onPressed: snapshot.data == true
-                                          ? widget.presenter.auth
-                                          : null,
-                                      child: Text('Entrar'.toUpperCase()));
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, bottom: 32),
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Senha',
+                                        icon: Icon(
+                                          Icons.lock,
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                        ),
+                                        errorText:
+                                            snapshot.data?.isEmpty == true
+                                                ? null
+                                                : snapshot.data,
+                                      ),
+                                      obscureText: true,
+                                      onChanged:
+                                          widget.presenter.validatePassword,
+                                    ),
+                                  );
                                 }),
-                          ),
-                          TextButton.icon(
-                              onPressed: () {},
-                              label: const Text('Criar conta'),
-                              icon: const Icon(Icons.person)),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: StreamBuilder<bool>(
+                                  stream: widget.presenter.isFormValidStream,
+                                  builder: (context, snapshot) {
+                                    return ElevatedButton(
+                                        onPressed: snapshot.data == true
+                                            ? widget.presenter.auth
+                                            : null,
+                                        child: Text('Entrar'.toUpperCase()));
+                                  }),
+                            ),
+                            TextButton.icon(
+                                onPressed: () {},
+                                label: const Text('Criar conta'),
+                                icon: const Icon(Icons.person)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
