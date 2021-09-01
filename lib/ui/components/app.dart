@@ -31,6 +31,10 @@ class LoginPresenterTemp implements LoginPresenter {
   void auth() {
     // TODO: implement auth
   }
+
+  @override
+  // TODO: implement isLoadingStream
+  Stream<bool> get isLoadingStream => throw UnimplementedError();
 }
 
 class App extends StatelessWidget {
