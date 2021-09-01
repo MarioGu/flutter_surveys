@@ -10,21 +10,20 @@ import 'package:flutter_course/ui/pages/pages.dart';
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
-  LoginPresenter presenter;
-  StreamController<String> emailErrorController;
-  StreamController<String> passwordErrorController;
-  StreamController<String> mainErrorController;
-  StreamController<bool> isFormValidController;
-  StreamController<bool> isLoadingController;
+  LoginPresenter presenter = LoginPresenterSpy();
 
-  presenter = LoginPresenterSpy();
-  emailErrorController = StreamController<String>.broadcast();
-  passwordErrorController = StreamController<String>.broadcast();
-  mainErrorController = StreamController<String>.broadcast();
-  isFormValidController = StreamController<bool>.broadcast();
-  isLoadingController = StreamController<bool>.broadcast();
+  StreamController<String> emailErrorController =
+      StreamController<String>.broadcast();
+  StreamController<String> passwordErrorController =
+      StreamController<String>.broadcast();
+  StreamController<String> mainErrorController =
+      StreamController<String>.broadcast();
+  StreamController<bool> isFormValidController =
+      StreamController<bool>.broadcast();
+  StreamController<bool> isLoadingController =
+      StreamController<bool>.broadcast();
 
-  Future<void> loadPage(WidgetTester tester) async {
+  void mockStreams() {
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream)
@@ -35,16 +34,24 @@ void main() {
         .thenAnswer((_) => isLoadingController.stream);
     when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
-    final loginPage = MaterialApp(home: LoginPage(presenter));
-    await tester.pumpWidget(loginPage);
   }
 
-  tearDownAll(() {
+  void closeStreams() {
     emailErrorController.close();
     passwordErrorController.close();
     mainErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+  }
+
+  Future<void> loadPage(WidgetTester tester) async {
+    mockStreams();
+    final loginPage = MaterialApp(home: LoginPage(presenter));
+    await tester.pumpWidget(loginPage);
+  }
+
+  tearDownAll(() {
+    closeStreams();
   });
 
   testWidgets('Should load with correct inital state',

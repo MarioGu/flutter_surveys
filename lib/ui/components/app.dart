@@ -28,8 +28,9 @@ class LoginPresenterTemp implements LoginPresenter {
   Stream<bool> get isFormValidStream => throw UnimplementedError();
 
   @override
-  void auth() {
+  void auth() async {
     // TODO: implement auth
+    return;
   }
 
   @override
