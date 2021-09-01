@@ -16,9 +16,9 @@ void main() {
   StreamController<bool> isFormValidController;
 
   presenter = LoginPresenterSpy();
-  emailErrorController = StreamController<String>();
-  passwordErrorController = StreamController<String>();
-  isFormValidController = StreamController<bool>();
+  emailErrorController = StreamController<String>.broadcast();
+  passwordErrorController = StreamController<String>.broadcast();
+  isFormValidController = StreamController<bool>.broadcast();
 
   Future<void> loadPage(WidgetTester tester) async {
     when(() => presenter.emailErrorStream)
@@ -31,9 +31,10 @@ void main() {
     await tester.pumpWidget(loginPage);
   }
 
-  tearDown(() {
+  tearDownAll(() {
     emailErrorController.close();
     passwordErrorController.close();
+    isFormValidController.close();
   });
 
   testWidgets('Should load with correct inital state',
@@ -119,5 +120,16 @@ void main() {
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Should disable button if form is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, null);
   });
 }
