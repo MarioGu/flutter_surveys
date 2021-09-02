@@ -142,4 +142,15 @@ void main() {
     verify(() => authentication.auth(
         AuthenticationParams(email: email, password: password))).called(1);
   });
+
+  test('Should emit correct events on Authentication success', () async {
+    mockAuthentication();
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    await sut.auth();
+  });
 }
