@@ -11,6 +11,7 @@ void main() {
   ValidationSpy validation = ValidationSpy();
   StreamLoginPresenter sut = StreamLoginPresenter(validation: validation);
   String email = faker.internet.email();
+  String password = faker.internet.password();
 
   When mockValidationCall(String? field) => when(() => validation.validate(
       field: field ?? any(named: 'field'), value: any(named: 'value')));
@@ -46,5 +47,12 @@ void main() {
 
     sut.validateEmail(email);
     sut.validateEmail(email);
+  });
+
+  test('Should call Validation with correct password', () {
+    sut.validatePassword(password);
+
+    verify(() => validation.validate(field: 'password', value: password))
+        .called(1);
   });
 }
