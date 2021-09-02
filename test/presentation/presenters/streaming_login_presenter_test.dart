@@ -16,12 +16,21 @@ class AuthenticationSpy extends Mock implements Authentication {}
 class FakeAuthenticationParams extends Mock implements AuthenticationParams {}
 
 void main() {
-  ValidationSpy validation = ValidationSpy();
-  AuthenticationSpy authentication = AuthenticationSpy();
-  StreamLoginPresenter sut = StreamLoginPresenter(
-      validation: validation, authentication: authentication);
-  String email = faker.internet.email();
-  String password = faker.internet.password();
+  late ValidationSpy validation;
+  late AuthenticationSpy authentication;
+  late StreamLoginPresenter sut;
+  late String email;
+  late String password;
+
+  setUp(() {
+    validation = ValidationSpy();
+    authentication = AuthenticationSpy();
+    sut = StreamLoginPresenter(
+        validation: validation, authentication: authentication);
+    email = faker.internet.email();
+    password = faker.internet.password();
+    registerFallbackValue(FakeAuthenticationParams());
+  });
 
   When mockValidationCall(String? field) => when(() => validation.validate(
       field: field ?? any(named: 'field'), value: any(named: 'value')));
@@ -40,10 +49,6 @@ void main() {
   void mockAuthenticationError(DomainError error) {
     mockAuthenticaionCall().thenThrow(error);
   }
-
-  setUpAll(() {
-    registerFallbackValue(FakeAuthenticationParams());
-  });
 
   test('Should call Validation with correct email', () {
     sut.validateEmail(email);
