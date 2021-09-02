@@ -1,4 +1,3 @@
-
 import '../../domain/helpers/domain_error.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/usecases/usecases.dart';
@@ -31,8 +30,8 @@ class RemoteAuthentication implements Authentication {
 }
 
 class RemoteAuthenticationParams {
-  final String email;
-  final String password;
+  final String? email;
+  final String? password;
 
   RemoteAuthenticationParams({required this.email, required this.password});
 

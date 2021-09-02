@@ -2,14 +2,23 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:flutter_course/domain/entities/entities.dart';
+import 'package:flutter_course/domain/usecases/usecases.dart';
+
 import 'package:flutter_course/presentation/protocols/protocols.dart';
 import 'package:flutter_course/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class AuthenticationSpy extends Mock implements Authentication {}
+
+class FakeAuthenticationParams extends Mock implements AuthenticationParams {}
+
 void main() {
   ValidationSpy validation = ValidationSpy();
-  StreamLoginPresenter sut = StreamLoginPresenter(validation: validation);
+  AuthenticationSpy authentication = AuthenticationSpy();
+  StreamLoginPresenter sut = StreamLoginPresenter(
+      validation: validation, authentication: authentication);
   String email = faker.internet.email();
   String password = faker.internet.password();
 
@@ -19,6 +28,17 @@ void main() {
   void mockValidation({String? field, String? value}) {
     mockValidationCall(field).thenReturn(value);
   }
+
+  When mockAuthenticaionCall() => when(() => authentication.auth(any()));
+
+  void mockAuthentication() {
+    mockAuthenticaionCall()
+        .thenAnswer((_) async => AccountEntity(faker.guid.toString()));
+  }
+
+  setUpAll(() {
+    registerFallbackValue(FakeAuthenticationParams());
+  });
 
   test('Should call Validation with correct email', () {
     sut.validateEmail(email);
@@ -109,5 +129,17 @@ void main() {
     sut.validateEmail(email);
     await Future.delayed(Duration.zero);
     sut.validatePassword(password);
+  });
+
+  test('Should call authentication with correct values', () async {
+    mockAuthentication();
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(() => authentication.auth(
+        AuthenticationParams(email: email, password: password))).called(1);
   });
 }
