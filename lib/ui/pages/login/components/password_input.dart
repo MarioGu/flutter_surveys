@@ -11,7 +11,7 @@ class PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final presenter = Provider.of<LoginPresenter>(context);
-    return StreamBuilder<String>(
+    return StreamBuilder<String?>(
         stream: presenter.passwordErrorStream,
         builder: (context, snapshot) {
           return Padding(
