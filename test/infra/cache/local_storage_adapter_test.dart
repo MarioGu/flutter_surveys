@@ -19,16 +19,23 @@ class LocalStorageAdapter implements SaveSecureCacheStorage {
 class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {}
 
 void main() {
-  test('Should call save secure with correct values', () async {
-    final key = faker.lorem.word();
-    final value = faker.guid.guid();
-    var secureStorage = FlutterSecureStorageSpy();
-    final sut = LocalStorageAdapter(secureStorage: secureStorage);
+  late String key;
+  late String value;
+  late FlutterSecureStorageSpy secureStorage;
+  late LocalStorageAdapter sut;
+
+  setUp(() {
+    key = faker.lorem.word();
+    value = faker.guid.guid();
+    secureStorage = FlutterSecureStorageSpy();
+    sut = LocalStorageAdapter(secureStorage: secureStorage);
 
     when(() => secureStorage.write(
         key: any(named: 'key'),
         value: any(named: 'value'))).thenAnswer((_) async => null);
+  });
 
+  test('Should call save secure with correct values', () async {
     await sut.saveSecure(key: key, value: value);
 
     verify(() => secureStorage.write(key: key, value: value));
