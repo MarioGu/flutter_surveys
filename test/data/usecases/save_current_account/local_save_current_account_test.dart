@@ -1,30 +1,12 @@
 import 'package:faker/faker.dart';
-import 'package:flutter_course/domain/helpers/helpers.dart';
 import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:flutter_course/domain/entities/entities.dart';
-import 'package:flutter_course/domain/usecases/usecases.dart';
+import 'package:flutter_course/domain/helpers/helpers.dart';
 
-class LocalSaveCurrentAccount implements SaveCurrentAccount {
-  late SaveSecureCacheStorage saveSecureCacheStorage;
-
-  LocalSaveCurrentAccount({required this.saveSecureCacheStorage});
-
-  @override
-  Future<void> save(AccountEntity account) async {
-    try {
-      await saveSecureCacheStorage.saveSecure(
-          key: 'token', value: account.token);
-    } catch (error) {
-      throw (DomainError.unexpected);
-    }
-  }
-}
-
-abstract class SaveSecureCacheStorage {
-  Future<void> saveSecure({required String key, required String value});
-}
+import 'package:flutter_course/data/cache/save_secure_cache_storage.dart';
+import 'package:flutter_course/data/usecases/save_current_account/local_save_current_account.dart';
 
 class SaveSecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
 }
