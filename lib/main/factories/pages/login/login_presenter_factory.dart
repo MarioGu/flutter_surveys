@@ -1,5 +1,6 @@
 import '../../../../presentation/presenters/presenters.dart';
 import '../../../../ui/pages/pages.dart';
+import '../../usecases/usecases.dart';
 import '../../factories.dart';
 
 LoginPresenter makeStreamLoginPresenter() {
@@ -9,7 +10,8 @@ LoginPresenter makeStreamLoginPresenter() {
 }
 
 LoginPresenter makeGetxLoginPresenter() {
-  return StreamLoginPresenter(
+  return GetxLoginPresenter(
       validation: makeLoginValidation(),
-      authentication: makeRemoteAuthentication());
+      authentication: makeRemoteAuthentication(),
+      saveCurrentAccount: makeLocalSaveCurrentAccount());
 }
