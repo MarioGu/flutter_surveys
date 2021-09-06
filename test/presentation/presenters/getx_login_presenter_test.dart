@@ -238,7 +238,7 @@ void main() {
     await sut.auth();
   });
 
-  test('Should change page on success success', () async {
+  test('Should change page on success', () async {
     mockAuthentication();
     mockSaveCurrentAccount();
 
