@@ -10,7 +10,7 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
+    presenter.checkAccount();
 
     return Scaffold(
       appBar: AppBar(
@@ -18,8 +18,8 @@ class SplashPage extends StatelessWidget {
       ),
       body: Builder(builder: (context) {
         presenter.navigateToStream.listen((page) {
-          if (page.isNotEmpty == true) {
-            Get.offAllNamed(page);
+          if (page?.isNotEmpty == true) {
+            Get.offAllNamed(page!);
           }
         });
         return const Center(

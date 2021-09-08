@@ -15,7 +15,7 @@ void main() {
   late StreamController<String> navigateToController;
 
   When mockLoadCurrentAccountCall(SplashPresenter presenter) {
-    return when(() => presenter.loadCurrentAccount());
+    return when(() => presenter.checkAccount());
   }
 
   void mockLoadCurrentAccount(SplashPresenter presenter) {
@@ -29,7 +29,7 @@ void main() {
     when(() => presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
 
-    await tester.pumpWidget(GetMaterialApp(
+    final splashPage = GetMaterialApp(
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => SplashPage(presenter: presenter)),
@@ -39,7 +39,8 @@ void main() {
                   body: Text('fake page'),
                 ))
       ],
-    ));
+    );
+    await tester.pumpWidget(splashPage);
   }
 
   tearDown(() {
@@ -57,7 +58,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    verify(() => presenter.loadCurrentAccount()).called(1);
+    verify(() => presenter.checkAccount()).called(1);
   });
 
   testWidgets('Should change page', (WidgetTester tester) async {
