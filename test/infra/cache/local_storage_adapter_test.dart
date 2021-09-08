@@ -60,6 +60,10 @@ void main() {
       mockFetchSecureCall().thenAnswer((_) async => value);
     }
 
+    void mockFetchSecureError() {
+      mockFetchSecureCall().thenThrow(Exception());
+    }
+
     test('Should call load secure with correct value', () async {
       mockFetchSecureSuccess();
 
@@ -74,6 +78,14 @@ void main() {
       final featchedValue = await sut.fetchSecure(key);
 
       expect(featchedValue, value);
+    });
+
+    test('Should throw if fetch secure throws', () async {
+      mockFetchSecureError();
+
+      final future = sut.fetchSecure(key);
+
+      expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });
 }
