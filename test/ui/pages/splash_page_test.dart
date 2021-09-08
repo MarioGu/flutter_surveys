@@ -6,37 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/route_manager.dart';
 import 'package:mocktail/mocktail.dart';
 
-class SplashPage extends StatelessWidget {
-  final SplashPresenter presenter;
-
-  const SplashPage({Key? key, required this.presenter}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chanllenges'),
-      ),
-      body: Builder(builder: (context) {
-        presenter.navigateToStream.listen((page) {
-          if (page.isNotEmpty == true) {
-            Get.offAllNamed(page);
-          }
-        });
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }),
-    );
-  }
-}
-
-abstract class SplashPresenter {
-  Stream<String> get navigateToStream;
-  Future<void> loadCurrentAccount();
-}
+import 'package:flutter_course/ui/pages/splash/splash.dart';
 
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
