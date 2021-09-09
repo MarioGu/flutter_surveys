@@ -8,6 +8,7 @@ import './factories/factories.dart';
 
 void main() {
   Provider.debugCheckInvalidValueType = null;
+  //R.load(const Locale('en', 'US'));
   runApp(const App());
 }
 

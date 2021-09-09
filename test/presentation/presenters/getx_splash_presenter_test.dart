@@ -13,17 +13,16 @@ void main() {
   late LoadCurrentAccountSpy loadCurrentAccount;
   late GetxSplashPresenter sut;
 
-  When mockCheckAccountCall({AccountEntity? account}) {
+  When mockCheckAccountCall() {
     return when(loadCurrentAccount.load);
   }
 
   void mockCheckAccount({AccountEntity? account}) {
-    mockCheckAccountCall(account: account).thenAnswer((_) async => account);
+    mockCheckAccountCall().thenAnswer((_) async => account);
   }
 
   void mockCheckAccountError() {
-    mockCheckAccountCall(account: AccountEntity(faker.guid.guid()))
-        .thenThrow(Exception());
+    mockCheckAccountCall().thenThrow(Exception());
   }
 
   setUp(() {

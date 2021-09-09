@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
-import 'package:flutter_course/validation/validators/email_validation.dart';
+import 'package:flutter_course/presentation/protocols/protocols.dart';
+import 'package:flutter_course/validation/validators/validators.dart';
 
 void main() {
   late EmailValidation sut;
@@ -22,6 +23,6 @@ void main() {
   });
 
   test('Should return error if email is invalid', () {
-    expect(sut.validate('email_invalido'), 'Campo inválido');
+    expect(sut.validate('email_invalido'), ValidationError.requiredField);
   });
 }

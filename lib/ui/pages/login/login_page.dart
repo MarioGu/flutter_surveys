@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
+import '../../helpers/errors/errors.dart';
 import '../pages.dart';
 import './components/components.dart';
 
@@ -34,7 +36,7 @@ class LoginPage extends StatelessWidget {
 
           presenter.mainErrorStream.listen((error) {
             if (error != null) {
-              showErrorMessage(context, error);
+              showErrorMessage(context, error.description);
             }
           });
 
@@ -69,7 +71,7 @@ class LoginPage extends StatelessWidget {
                               ),
                               TextButton.icon(
                                   onPressed: () {},
-                                  label: const Text('Criar conta'),
+                                  label: Text(R.strings.addAccount),
                                   icon: const Icon(Icons.person)),
                             ],
                           ),
