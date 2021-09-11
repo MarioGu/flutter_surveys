@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
-import '../../helpers/errors/errors.dart';
+import '../../helpers/helpers.dart';
 import '../pages.dart';
 import './components/components.dart';
 
@@ -53,8 +52,8 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const LoginHeader(),
-                    const Headline1(
-                      text: 'Login',
+                    Headline1(
+                      text: R.strings.login,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(32),

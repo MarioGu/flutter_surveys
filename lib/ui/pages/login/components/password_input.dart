@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course/ui/helpers/errors/ui_error.dart';
 import 'package:provider/provider.dart';
 
-import '../../../helpers/errors/ui_error.dart';
+import '../../../helpers/helpers.dart';
 import '../login_presenter.dart';
 
 class PasswordInput extends StatelessWidget {
@@ -20,7 +20,7 @@ class PasswordInput extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8.0, bottom: 32),
             child: TextFormField(
               decoration: InputDecoration(
-                labelText: 'Senha',
+                labelText: R.strings.password,
                 icon: Icon(
                   Icons.lock,
                   color: Theme.of(context).primaryColorDark,
