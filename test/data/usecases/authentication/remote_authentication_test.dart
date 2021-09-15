@@ -2,7 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:flutter_course/domain/helpers/domain_error.dart';
+import 'package:flutter_course/domain/helpers/helpers.dart';
 import 'package:flutter_course/domain/usecases/usecases.dart';
 
 import 'package:flutter_course/data/usecases/usecases.dart';
