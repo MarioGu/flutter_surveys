@@ -57,8 +57,6 @@ void main() {
   test('Should throw UnexpectedError if HttpClient returns 400', () async {
     mockHttpError(HttpError.badRequest);
 
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
@@ -67,8 +65,6 @@ void main() {
   test('Should throw UnexpectedError if HttpClient returns 404', () async {
     mockHttpError(HttpError.notFound);
 
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
@@ -77,8 +73,6 @@ void main() {
   test('Should throw UnexpectedError if HttpClient returns 500', () async {
     mockHttpError(HttpError.serverError);
 
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
@@ -88,8 +82,6 @@ void main() {
       () async {
     mockHttpError(HttpError.unauthorized);
 
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
@@ -98,9 +90,6 @@ void main() {
   test('Should return an Account if HttpClient returns 200', () async {
     final validData = mockValidData();
     mockHttpData(validData);
-
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
 
     final account = await sut.auth(params);
 

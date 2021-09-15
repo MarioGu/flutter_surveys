@@ -61,11 +61,14 @@ void main() {
   test('Should throw UnexpectedError if HttpClient returns 400', () async {
     mockHttpError(HttpError.badRequest);
 
-    final params = AddAccountParams(
-        name: faker.internet.email(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-        passwordConfirmation: faker.internet.password());
+    final future = sut.add(params);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 404', () async {
+    mockHttpError(HttpError.notFound);
+
     final future = sut.add(params);
 
     expect(future, throwsA(DomainError.unexpected));
