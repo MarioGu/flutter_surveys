@@ -277,8 +277,10 @@ void main() {
   });
 
   test('Should call SaveCurrentAccount with correct value', () async {
+    sut.validateName(name);
     sut.validateEmail(email);
     sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
 
     await sut.signUp();
 
@@ -288,11 +290,24 @@ void main() {
   test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
     mockSaveCurrentAccountError();
 
+    sut.validateName(name);
     sut.validateEmail(email);
     sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
 
     sut.mainErrorStream
         .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
+
+    await sut.signUp();
+  });
+
+  test('Should emit correct events on AddAccount success', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    expectLater(sut.isLoadingStream, emits(true));
 
     await sut.signUp();
   });
