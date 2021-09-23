@@ -24,6 +24,8 @@ class PasswordInput extends StatelessWidget {
                   Icons.lock,
                   color: Theme.of(context).primaryColorDark,
                 ),
+                errorText:
+                    snapshot.data != null ? snapshot.data!.description : null,
               ),
               obscureText: true,
               onChanged: presenter.validatePassword,
