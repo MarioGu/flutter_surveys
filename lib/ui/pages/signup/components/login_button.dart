@@ -1,5 +1,7 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
+import '../signup_presenter.dart';
 import '../../../helpers/helpers.dart';
 
 class SignUpButton extends StatelessWidget {
@@ -9,7 +11,13 @@ class SignUpButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        onPressed: null, child: Text(R.strings.addAccount.toUpperCase()));
+    final presenter = Provider.of<SignUpPresenter>(context);
+    return StreamBuilder<bool>(
+        stream: presenter.isFormValidStream,
+        builder: (context, snapshot) {
+          return ElevatedButton(
+              onPressed: snapshot.data == true ? presenter.signup : null,
+              child: Text(R.strings.addAccount.toUpperCase()));
+        });
   }
 }
