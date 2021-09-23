@@ -22,6 +22,8 @@ void main() {
       StreamController<UIError?>.broadcast();
   StreamController<UIError?> passwordConfirmationErrorController =
       StreamController<UIError?>.broadcast();
+  StreamController<bool> isFormValidController =
+      StreamController<bool>.broadcast();
 
   void mockStreams() {
     when(() => presenter.nameErrorStream)
@@ -32,6 +34,8 @@ void main() {
         .thenAnswer((_) => passwordErrorController.stream);
     when(() => presenter.passwordConfirmationErrorStream)
         .thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(() => presenter.isFormValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
   }
 
   void closeStreams() {
@@ -39,10 +43,20 @@ void main() {
     emailErrorController.close();
     passwordErrorController.close();
     passwordConfirmationErrorController.close();
+    isFormValidController.close();
+  }
+
+  When mockSignUpCall(SignUpPresenter presenter) {
+    return when(() => presenter.signUp());
+  }
+
+  void mockAccount(SignUpPresenter presenter) {
+    mockSignUpCall(presenter).thenAnswer((_) async => null);
   }
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SignUpPresenterSpy();
+    mockAccount(presenter);
     mockStreams();
     final signUpPage = GetMaterialApp(
       initialRoute: '/signup',
@@ -187,5 +201,40 @@ void main() {
             of: find.bySemanticsLabel('Confirmar senha'),
             matching: find.byType(Text)),
         findsOneWidget);
+  });
+
+  testWidgets('Should enable button if form is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Should disable button if form is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, null);
+  });
+
+  testWidgets('Should call signup on form submit', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+    final button = find.byType(ElevatedButton);
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+
+    verify(() => presenter.signUp()).called(1);
   });
 }
