@@ -25,6 +25,8 @@ class EnUs implements Translations {
   @override
   String get msgRequiredField => 'RequiredField';
   @override
+  String get msgEmailInUse => 'Email in use';
+  @override
   String get msgSomethingHappend =>
       'An unkown error has occurred. Try again later.';
 }
