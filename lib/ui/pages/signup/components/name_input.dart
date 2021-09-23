@@ -1,8 +1,8 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-import '../signup_presenter.dart';
 import '../../../helpers/helpers.dart';
+import '../signup_presenter.dart';
 
 class NameInput extends StatelessWidget {
   const NameInput({
@@ -22,6 +22,8 @@ class NameInput extends StatelessWidget {
                 Icons.person,
                 color: Theme.of(context).primaryColorDark,
               ),
+              errorText:
+                  snapshot.data != null ? snapshot.data!.description : null,
             ),
             keyboardType: TextInputType.name,
             onChanged: presenter.validateName,
