@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 
 import '../../ui/helpers/errors/errors.dart';
+import '../../domain/usecases/usecases.dart';
 
 import '../protocols/protocols.dart';
 
 class GetxSignUpPresenter {
   final Validation validation;
+  final AddAccount addAccount;
 
   final _emailError = Rx<UIError?>(null);
   final _nameError = Rx<UIError?>(null);
@@ -30,7 +32,7 @@ class GetxSignUpPresenter {
   @override
   Stream<bool> get isFormValidStream => _isFormValid.stream;
 
-  GetxSignUpPresenter({required this.validation});
+  GetxSignUpPresenter({required this.validation, required this.addAccount});
 
   @override
   void validateEmail(String email) {
@@ -82,5 +84,14 @@ class GetxSignUpPresenter {
         _email != null &&
         _password != null &&
         _passwordConfirmation != null;
+  }
+
+  @override
+  Future<void> signUp() async {
+    await addAccount.add(AddAccountParams(
+        name: _name,
+        email: _email,
+        password: _password,
+        passwordConfirmation: _passwordConfirmation));
   }
 }
