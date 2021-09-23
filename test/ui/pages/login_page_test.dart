@@ -12,7 +12,7 @@ import 'package:flutter_course/ui/pages/pages.dart';
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
-  LoginPresenter presenter = LoginPresenterSpy();
+  late LoginPresenter presenter;
 
   StreamController<UIError?> emailErrorController =
       StreamController<UIError?>.broadcast();
@@ -51,8 +51,18 @@ void main() {
     isLoadingController.close();
   }
 
+  When mockAuthCall(LoginPresenter presenter) {
+    return when(() => presenter.auth());
+  }
+
+  void mockAccount(LoginPresenter presenter) {
+    mockAuthCall(presenter).thenAnswer((_) async => null);
+  }
+
   Future<void> loadPage(WidgetTester tester) async {
+    presenter = LoginPresenterSpy();
     mockStreams();
+    mockAccount(presenter);
     final loginPage = GetMaterialApp(
       initialRoute: '/login',
       getPages: [
