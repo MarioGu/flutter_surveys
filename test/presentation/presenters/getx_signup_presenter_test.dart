@@ -2,6 +2,8 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:flutter_course/domain/entities/entities.dart';
+import 'package:flutter_course/domain/usecases/usecases.dart';
 import 'package:flutter_course/ui/helpers/errors/ui_error.dart';
 
 import 'package:flutter_course/presentation/presenters/presenters.dart';
@@ -9,24 +11,19 @@ import 'package:flutter_course/presentation/protocols/protocols.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class AddAccountSpy extends Mock implements AddAccount {}
+
+class FakeAddAccountParams extends Mock implements AddAccountParams {}
+
 void main() {
   late GetxSignUpPresenter sut;
   late ValidationSpy validation;
+  late AddAccountSpy addAccount;
   late String email;
   late String name;
   late String password;
   late String passwordConfirmation;
-
-  setUp(() {
-    validation = ValidationSpy();
-    sut = GetxSignUpPresenter(
-      validation: validation,
-    );
-    email = faker.internet.email();
-    name = faker.person.name();
-    password = faker.internet.password();
-    passwordConfirmation = faker.internet.password();
-  });
+  late String token;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
       field: field ?? any(named: 'field'), value: any(named: 'value')));
@@ -34,6 +31,28 @@ void main() {
   void mockValidation({String? field, ValidationError? value}) {
     mockValidationCall(field).thenReturn(value);
   }
+
+  When mockAddAccountCall() => when(() => addAccount.add(any()));
+
+  void mockAddAccount() {
+    mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
+  }
+
+  setUp(() {
+    validation = ValidationSpy();
+    addAccount = AddAccountSpy();
+    sut = GetxSignUpPresenter(
+      validation: validation,
+      addAccount: addAccount,
+    );
+    email = faker.internet.email();
+    name = faker.person.name();
+    password = faker.internet.password();
+    passwordConfirmation = faker.internet.password();
+    token = faker.guid.guid();
+    registerFallbackValue(FakeAddAccountParams());
+    mockAddAccount();
+  });
 
   test('Should call Validation with correct email', () {
     sut.validateEmail(email);
@@ -218,5 +237,20 @@ void main() {
     sut.validatePassword(password);
     await Future.delayed(Duration.zero);
     sut.validatePasswordConfirmation(passwordConfirmation);
+  });
+
+  test('Should call AddAccount with correct values', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    await sut.signUp();
+
+    verify(() => addAccount.add(AddAccountParams(
+        name: name,
+        email: email,
+        password: password,
+        passwordConfirmation: passwordConfirmation))).called(1);
   });
 }
