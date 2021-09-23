@@ -18,6 +18,7 @@ class GetxSignUpPresenter {
   final _mainError = Rx<UIError?>(null);
   final _isFormValid = false.obs;
   final _isLoading = false.obs;
+  final _navigateTo = Rx<String?>(null);
 
   String? _name;
   String? _email;
@@ -39,6 +40,8 @@ class GetxSignUpPresenter {
   Stream<bool> get isFormValidStream => _isFormValid.stream;
   @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
+  @override
+  Stream<String?> get navigateToStream => _navigateTo.stream;
 
   GetxSignUpPresenter(
       {required this.validation,
@@ -107,6 +110,7 @@ class GetxSignUpPresenter {
           password: _password,
           passwordConfirmation: _passwordConfirmation));
       await saveCurrentAccount.save(account);
+      _navigateTo.value = '/surveys';
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emailInUse:
