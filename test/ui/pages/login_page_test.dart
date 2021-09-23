@@ -59,10 +59,19 @@ void main() {
     mockAuthCall(presenter).thenAnswer((_) async => null);
   }
 
+  When mockGoToSignUpCall(LoginPresenter presenter) {
+    return when(() => presenter.goToSignUp());
+  }
+
+  void mockGoToSignUp(LoginPresenter presenter) {
+    mockGoToSignUpCall(presenter).thenAnswer((_) async => null);
+  }
+
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
     mockStreams();
     mockAccount(presenter);
+    mockGoToSignUp(presenter);
     final loginPage = GetMaterialApp(
       initialRoute: '/login',
       getPages: [
@@ -260,5 +269,17 @@ void main() {
     await tester.pump();
 
     expect(Get.currentRoute, '/login');
+  });
+
+  testWidgets('Should call goToSignUp on link click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final button = find.text('Criar conta');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+
+    verify(() => presenter.goToSignUp()).called(1);
   });
 }
