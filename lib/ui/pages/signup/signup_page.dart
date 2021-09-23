@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:get/route_manager.dart';
 
 import '../../components/components.dart';
 import '../../helpers/helpers.dart';
@@ -35,6 +36,12 @@ class SignUpPage extends StatelessWidget {
           presenter.mainErrorStream.listen((error) {
             if (error != null) {
               showErrorMessage(context, error.description);
+            }
+          });
+
+          presenter.navigateToStream.listen((page) {
+            if (page?.isNotEmpty == true) {
+              Get.offAllNamed(page!);
             }
           });
 
