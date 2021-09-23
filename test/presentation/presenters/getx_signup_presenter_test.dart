@@ -15,10 +15,15 @@ class AddAccountSpy extends Mock implements AddAccount {}
 
 class FakeAddAccountParams extends Mock implements AddAccountParams {}
 
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
+
+class FakeAccountEntity extends Mock implements AccountEntity {}
+
 void main() {
   late GetxSignUpPresenter sut;
   late ValidationSpy validation;
   late AddAccountSpy addAccount;
+  late SaveCurrentAccount saveCurrentAccount;
   late String email;
   late String name;
   late String password;
@@ -38,12 +43,21 @@ void main() {
     mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
   }
 
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentAccount.save(any()));
+
+  void mockSaveCurrentAccount() {
+    mockSaveCurrentAccountCall().thenAnswer((_) async => AccountEntity(token));
+  }
+
   setUp(() {
     validation = ValidationSpy();
     addAccount = AddAccountSpy();
+    saveCurrentAccount = SaveCurrentAccountSpy();
     sut = GetxSignUpPresenter(
       validation: validation,
       addAccount: addAccount,
+      saveCurrentAccount: saveCurrentAccount,
     );
     email = faker.internet.email();
     name = faker.person.name();
@@ -51,7 +65,9 @@ void main() {
     passwordConfirmation = faker.internet.password();
     token = faker.guid.guid();
     registerFallbackValue(FakeAddAccountParams());
+    registerFallbackValue(FakeAccountEntity());
     mockAddAccount();
+    mockSaveCurrentAccount();
   });
 
   test('Should call Validation with correct email', () {
@@ -252,5 +268,14 @@ void main() {
         email: email,
         password: password,
         passwordConfirmation: passwordConfirmation))).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct value', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.signUp();
+
+    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
   });
 }
