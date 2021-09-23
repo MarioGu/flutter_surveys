@@ -1,3 +1,4 @@
+import 'package:flutter_course/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 
 import '../../ui/helpers/errors/errors.dart';
@@ -14,7 +15,9 @@ class GetxSignUpPresenter {
   final _nameError = Rx<UIError?>(null);
   final _passwordError = Rx<UIError?>(null);
   final _passwordConfirmationError = Rx<UIError?>(null);
+  final _mainError = Rx<UIError?>(null);
   final _isFormValid = false.obs;
+  final _isLoading = false.obs;
 
   String? _name;
   String? _email;
@@ -31,7 +34,11 @@ class GetxSignUpPresenter {
   Stream<UIError?> get passwordConfirmationErrorStream =>
       _passwordConfirmationError.stream;
   @override
+  Stream<UIError?> get mainErrorStream => _mainError.stream;
+  @override
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+  @override
+  Stream<bool> get isLoadingStream => _isLoading.stream;
 
   GetxSignUpPresenter(
       {required this.validation,
@@ -92,11 +99,16 @@ class GetxSignUpPresenter {
 
   @override
   Future<void> signUp() async {
-    final account = await addAccount.add(AddAccountParams(
-        name: _name,
-        email: _email,
-        password: _password,
-        passwordConfirmation: _passwordConfirmation));
-    await saveCurrentAccount.save(account);
+    try {
+      _isLoading.value = true;
+      final account = await addAccount.add(AddAccountParams(
+          name: _name,
+          email: _email,
+          password: _password,
+          passwordConfirmation: _passwordConfirmation));
+      await saveCurrentAccount.save(account);
+    } on DomainError {
+      _mainError.value = UIError.unexpected;
+    }
   }
 }
