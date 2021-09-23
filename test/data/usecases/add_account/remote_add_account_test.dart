@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:flutter_course/domain/helpers/helpers.dart';
 import 'package:flutter_course/domain/usecases/usecases.dart';
 
 import 'package:flutter_course/data/usecases/usecases.dart';
@@ -22,6 +23,10 @@ void main() {
 
   void mockHttpData() {
     mockRequest().thenAnswer((_) async => {});
+  }
+
+  void mockHttpError(HttpError error) {
+    mockRequest().thenThrow(error);
   }
 
   setUp(() {
@@ -49,5 +54,21 @@ void main() {
           'password': params.password,
           'passwordConfirmation': params.passwordConfirmation,
         }));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 400', () async {
+    mockHttpError(HttpError.badRequest);
+
+    final future = sut.add(params);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 404', () async {
+    mockHttpError(HttpError.notFound);
+
+    final future = sut.add(params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
