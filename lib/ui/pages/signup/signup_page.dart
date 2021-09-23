@@ -24,6 +24,14 @@ class SignUpPage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Builder(
         builder: (builderContext) {
+          presenter.isLoadingStream.listen((isLoading) {
+            if (isLoading) {
+              showLoading(context);
+            } else {
+              hideLoading(context);
+            }
+          });
+
           return SafeArea(
             child: GestureDetector(
               onTap: _hideKeyboard,
