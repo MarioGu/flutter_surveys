@@ -1,5 +1,7 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
+import '../signup_presenter.dart';
 import '../../../helpers/helpers.dart';
 
 class PasswordInput extends StatelessWidget {
@@ -9,18 +11,24 @@ class PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 32),
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: R.strings.password,
-          icon: Icon(
-            Icons.lock,
-            color: Theme.of(context).primaryColorDark,
-          ),
-        ),
-        obscureText: true,
-      ),
-    );
+    final presenter = Provider.of<SignUpPresenter>(context);
+    return StreamBuilder<UIError?>(
+        stream: presenter.passwordErrorStream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 32),
+            child: TextFormField(
+              decoration: InputDecoration(
+                labelText: R.strings.password,
+                icon: Icon(
+                  Icons.lock,
+                  color: Theme.of(context).primaryColorDark,
+                ),
+              ),
+              obscureText: true,
+              onChanged: presenter.validatePassword,
+            ),
+          );
+        });
   }
 }

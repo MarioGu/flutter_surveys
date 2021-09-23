@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
 import '../../helpers/helpers.dart';
 import './components/components.dart';
+import 'signup_presenter.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  final SignUpPresenter presenter;
+
+  const SignUpPage(this.presenter, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,22 +36,25 @@ class SignUpPage extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(32),
-                      child: Form(
-                        child: Column(
-                          children: [
-                            const NameInput(),
-                            const EmailInput(),
-                            const PasswordInput(),
-                            const PasswordConfirmationInput(),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 16),
-                              child: SignUpButton(),
-                            ),
-                            TextButton.icon(
-                                onPressed: () {},
-                                label: Text(R.strings.login),
-                                icon: const Icon(Icons.exit_to_app)),
-                          ],
+                      child: Provider(
+                        create: (_) => presenter,
+                        child: Form(
+                          child: Column(
+                            children: [
+                              const NameInput(),
+                              const EmailInput(),
+                              const PasswordInput(),
+                              const PasswordConfirmationInput(),
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 16),
+                                child: SignUpButton(),
+                              ),
+                              TextButton.icon(
+                                  onPressed: () {},
+                                  label: Text(R.strings.login),
+                                  icon: const Icon(Icons.exit_to_app)),
+                            ],
+                          ),
                         ),
                       ),
                     ),
