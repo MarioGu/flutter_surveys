@@ -109,7 +109,7 @@ class GetxSignUpPresenter {
       await saveCurrentAccount.save(account);
     } on DomainError {
       _mainError.value = UIError.unexpected;
+      _isLoading.value = false;
     }
-    _isLoading.value = false;
   }
 }
