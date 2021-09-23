@@ -1,24 +1,61 @@
 import 'dart:async';
 
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/route_manager.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:flutter_course/ui/helpers/errors/errors.dart';
 import 'package:flutter_course/ui/pages/pages.dart';
 
-class LoginPresenterSpy extends Mock implements LoginPresenter {}
+class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
 void main() {
+  late SignUpPresenter presenter;
+
+  StreamController<UIError?> nameErrorController =
+      StreamController<UIError?>.broadcast();
+  StreamController<UIError?> emailErrorController =
+      StreamController<UIError?>.broadcast();
+  StreamController<UIError?> passwordErrorController =
+      StreamController<UIError?>.broadcast();
+  StreamController<UIError?> passwordConfirmationErrorController =
+      StreamController<UIError?>.broadcast();
+
+  void mockStreams() {
+    when(() => presenter.nameErrorStream)
+        .thenAnswer((_) => emailErrorController.stream);
+    when(() => presenter.emailErrorStream)
+        .thenAnswer((_) => emailErrorController.stream);
+    when(() => presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordErrorController.stream);
+    when(() => presenter.passwordConfirmationErrorStream)
+        .thenAnswer((_) => passwordConfirmationErrorController.stream);
+  }
+
+  void closeStreams() {
+    nameErrorController.close();
+    emailErrorController.close();
+    passwordErrorController.close();
+    passwordConfirmationErrorController.close();
+  }
+
   Future<void> loadPage(WidgetTester tester) async {
+    presenter = SignUpPresenterSpy();
+    mockStreams();
     final signUpPage = GetMaterialApp(
       initialRoute: '/signup',
       getPages: [
-        GetPage(name: '/signup', page: () => SignUpPage()),
+        GetPage(name: '/signup', page: () => SignUpPage(presenter)),
       ],
     );
     await tester.pumpWidget(signUpPage);
   }
+
+  tearDownAll(() {
+    closeStreams();
+  });
 
   testWidgets('Should load with correct inital state',
       (WidgetTester tester) async {
@@ -52,5 +89,25 @@ void main() {
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, null);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Should call validate with correct values',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final name = faker.person.name();
+    await tester.enterText(find.bySemanticsLabel('Nome'), name);
+    verify(() => presenter.validateName(name));
+
+    final email = faker.internet.email();
+    await tester.enterText(find.bySemanticsLabel('Email'), email);
+    verify(() => presenter.validateEmail(email));
+
+    final password = faker.internet.password();
+    await tester.enterText(find.bySemanticsLabel('Senha'), password);
+    verify(() => presenter.validatePassword(password));
+
+    await tester.enterText(find.bySemanticsLabel('Confirmar senha'), password);
+    verify(() => presenter.validatePasswordConfirmation(password));
   });
 }
