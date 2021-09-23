@@ -22,6 +22,8 @@ class PasswordConfirmationInput extends StatelessWidget {
                 Icons.person,
                 color: Theme.of(context).primaryColorDark,
               ),
+              errorText:
+                  snapshot.data != null ? snapshot.data!.description : null,
             ),
             keyboardType: TextInputType.name,
             onChanged: presenter.validatePasswordConfirmation,
