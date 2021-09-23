@@ -110,5 +110,6 @@ class GetxSignUpPresenter {
     } on DomainError {
       _mainError.value = UIError.unexpected;
     }
+    _isLoading.value = false;
   }
 }

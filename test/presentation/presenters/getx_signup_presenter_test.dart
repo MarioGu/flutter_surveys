@@ -3,7 +3,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:flutter_course/domain/entities/entities.dart';
+import 'package:flutter_course/domain/helpers/helpers.dart';
 import 'package:flutter_course/domain/usecases/usecases.dart';
+
 import 'package:flutter_course/ui/helpers/errors/ui_error.dart';
 
 import 'package:flutter_course/presentation/presenters/presenters.dart';
@@ -48,6 +50,10 @@ void main() {
 
   void mockSaveCurrentAccount() {
     mockSaveCurrentAccountCall().thenAnswer((_) async => AccountEntity(token));
+  }
+
+  void mockSaveCurrentAccountError() {
+    mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
   }
 
   setUp(() {
@@ -277,5 +283,17 @@ void main() {
     await sut.signUp();
 
     verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    mockSaveCurrentAccountError();
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
+
+    await sut.signUp();
   });
 }
