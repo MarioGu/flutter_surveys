@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:flutter_course/domain/entities/entities.dart';
 import 'package:flutter_course/domain/helpers/helpers.dart';
 
-import 'package:flutter_course/data/usecases/load_surveys/load_surveys.dart';
+import 'package:flutter_course/data/usecases/usecases.dart';
 import 'package:flutter_course/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient<List<Map>> {}

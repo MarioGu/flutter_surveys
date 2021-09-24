@@ -1,7 +1,7 @@
-import 'package:flutter_course/data/models/remote_survey_model.dart';
-import 'package:flutter_course/domain/entities/entities.dart';
-import 'package:flutter_course/domain/helpers/helpers.dart';
+import '../../../domain/entities/entities.dart';
+import '../../../domain/helpers/helpers.dart';
 
+import '../../models/remote_survey_model.dart';
 import '../../http/http.dart';
 
 class RemoteLoadSurveys {
