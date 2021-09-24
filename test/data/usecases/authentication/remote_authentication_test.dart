@@ -8,7 +8,7 @@ import 'package:flutter_course/domain/usecases/usecases.dart';
 import 'package:flutter_course/data/usecases/usecases.dart';
 import 'package:flutter_course/data/http/http.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
+class HttpClientSpy extends Mock implements HttpClient<Map> {}
 
 void main() {
   late RemoteAuthentication sut;
@@ -16,11 +16,10 @@ void main() {
   late String url;
   late AuthenticationParams params;
 
-  When<Future<Map<dynamic, dynamic>>> mockRequest() =>
-      when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body')));
+  When mockRequest() => when(() => httpClient.request(
+      url: any(named: 'url'),
+      method: any(named: 'method'),
+      body: any(named: 'body')));
 
   void mockHttpData(Map data) {
     mockRequest().thenAnswer((_) async => data);

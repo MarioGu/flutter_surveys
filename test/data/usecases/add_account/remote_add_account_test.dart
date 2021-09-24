@@ -8,7 +8,7 @@ import 'package:flutter_course/domain/usecases/usecases.dart';
 import 'package:flutter_course/data/usecases/usecases.dart';
 import 'package:flutter_course/data/http/http.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
+class HttpClientSpy extends Mock implements HttpClient<Map> {}
 
 void main() {
   late RemoteAddAccount sut;
