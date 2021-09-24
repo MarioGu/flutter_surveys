@@ -1,7 +1,9 @@
 import 'package:faker/faker.dart';
-import 'package:flutter_course/domain/entities/entities.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+import 'package:flutter_course/domain/entities/entities.dart';
+import 'package:flutter_course/domain/helpers/helpers.dart';
 
 import 'package:flutter_course/data/usecases/load_surveys/load_surveys.dart';
 import 'package:flutter_course/data/http/http.dart';
@@ -68,5 +70,17 @@ void main() {
           dateTime: DateTime.parse(list[1]["date"]),
           didAnswer: list[1]["didAnswer"]),
     ]);
+  });
+
+  test(
+      'Should throw UnexpectedError if HttpClient returns 200 with invalid data',
+      () async {
+    mockHttpData([
+      {'invalid_key': 'invalid_value'}
+    ]);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
