@@ -1,5 +1,6 @@
 import 'package:flutter_course/data/models/remote_survey_model.dart';
 import 'package:flutter_course/domain/entities/entities.dart';
+import 'package:flutter_course/domain/helpers/helpers.dart';
 
 import '../../http/http.dart';
 
@@ -10,9 +11,13 @@ class RemoteLoadSurveys {
   RemoteLoadSurveys({required this.httpClient, required this.url});
 
   Future<List<SurveyEntity>> load() async {
-    final httpResponse = await httpClient.request(url: url, method: 'get');
-    return httpResponse
-        .map((json) => RemoteSurveyModel.fromJson(json).toEntity())
-        .toList();
+    try {
+      final httpResponse = await httpClient.request(url: url, method: 'get');
+      return httpResponse
+          .map((json) => RemoteSurveyModel.fromJson(json).toEntity())
+          .toList();
+    } on HttpError {
+      throw DomainError.unexpected;
+    }
   }
 }
