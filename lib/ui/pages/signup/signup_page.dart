@@ -67,7 +67,7 @@ class SignUpPage extends StatelessWidget {
                               const PasswordInput(),
                               const PasswordConfirmationInput(),
                               const Padding(
-                                padding: EdgeInsets.only(bottom: 16),
+                                padding: EdgeInsets.only(bottom: 16, top: 32),
                                 child: SignUpButton(),
                               ),
                               TextButton.icon(

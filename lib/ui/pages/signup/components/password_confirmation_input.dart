@@ -19,13 +19,13 @@ class PasswordConfirmationInput extends StatelessWidget {
             decoration: InputDecoration(
               labelText: R.strings.confirmPassword,
               icon: Icon(
-                Icons.person,
+                Icons.lock,
                 color: Theme.of(context).primaryColorDark,
               ),
               errorText:
                   snapshot.data != null ? snapshot.data!.description : null,
             ),
-            keyboardType: TextInputType.name,
+            obscureText: true,
             onChanged: presenter.validatePasswordConfirmation,
           );
         });
