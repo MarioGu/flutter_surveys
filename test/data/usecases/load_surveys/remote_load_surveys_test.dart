@@ -2,20 +2,10 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:flutter_course/data/usecases/load_surveys/load_surveys.dart';
 import 'package:flutter_course/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
-
-class RemoteLoadSurveys {
-  HttpClient httpClient;
-  String url;
-
-  RemoteLoadSurveys({required this.httpClient, required this.url});
-
-  Future<void> load() async {
-    await httpClient.request(url: url, method: 'get');
-  }
-}
 
 void main() {
   late HttpClientSpy httpClient;
